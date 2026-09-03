@@ -11,20 +11,40 @@ A glassmorphic desktop Pomodoro timer inspired by the macOS/iOS widget aesthetic
 - **Lives in the menu bar** — a tray icon lets you show/hide the widget or
   quit; the × on the window just tucks it away instead of closing the app.
 
-## Requirements
+## Install
 
-- [Node.js](https://nodejs.org/) 18+ (includes `npm`)
+### Option A: Download the app (recommended)
 
-## Setup
+Grab the latest `.dmg` from the [Releases page](https://github.com/jinayeom/leetcode-pomodoro/releases) —
+pick the `arm64` build for Apple Silicon Macs or the plain build for Intel
+Macs. Open the `.dmg` and drag **LeetCode Pomodoro** into Applications.
+
+This build isn't code-signed or notarized (that requires a paid Apple
+Developer account), so macOS Gatekeeper will refuse to open it with a
+message like *"LeetCode Pomodoro" can't be opened because Apple cannot check
+it for malicious software*. To run it anyway:
+
+1. **Right-click** (or Control-click) **LeetCode Pomodoro.app** in
+   Applications and choose **Open**.
+2. In the dialog that appears, click **Open** again.
+
+You only need to do this once — after that it opens normally, including via
+Spotlight or the Dock.
+
+### Option B: Run from source
+
+Requires [Node.js](https://nodejs.org/) 18+ (includes `npm`).
 
 ```bash
-cd pomodoro-focus
+git clone https://github.com/jinayeom/leetcode-pomodoro.git
+cd leetcode-pomodoro
 npm install
 npm start
 ```
 
-The app launches as a frameless, translucent indigo window and adds an icon to
-your menu bar (it won't show in the dock). Drag the widget by its top bar.
+Either way, the app launches as a frameless, translucent indigo window and
+adds an icon to your menu bar (it won't show in the dock). Drag the widget by
+its top bar.
 
 ### Menu bar controls
 
@@ -77,6 +97,26 @@ e.g. `raw_solutions/1_two-sum.py`).
 
 The full Grind 75 list (for reference) is at
 <https://www.techinterviewhandbook.org/grind75>.
+
+## Building a release
+
+Packaging is handled by [electron-builder](https://www.electron.build/), configured
+in the `build` field of `package.json`.
+
+```bash
+npm install
+CSC_IDENTITY_AUTO_DISCOVERY=false npm run dist
+```
+
+That produces two unsigned `.dmg` files in `release/` — one for Apple Silicon
+(`arm64`) and one for Intel (`x64`). The `CSC_IDENTITY_AUTO_DISCOVERY=false`
+env var tells electron-builder not to look for a code-signing certificate,
+since this project isn't signed/notarized. To publish a new version:
+
+1. Bump `version` in `package.json`.
+2. Run the build command above.
+3. Create a new [GitHub Release](https://github.com/jinayeom/leetcode-pomodoro/releases/new),
+   tag it (e.g. `v1.0.1`), and attach both `.dmg` files from `release/`.
 
 ## Customizing
 

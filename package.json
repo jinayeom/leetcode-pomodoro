@@ -1,14 +1,40 @@
 {
-  "name": "pomodoro-focus",
+  "name": "leetcode-pomodoro",
   "version": "1.0.0",
   "description": "A glassmorphic Pomodoro timer with scrolling LeetCode (Grind 75) solutions in the background.",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "electron-builder"
   },
-  "author": "",
+  "author": "jinayeom",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^33.0.0"
+    "electron": "^33.0.0",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.jinayeom.leetcodepomodoro",
+    "productName": "LeetCode Pomodoro",
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "solutions.json",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "build",
+      "output": "release"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.icns",
+      "target": [
+        { "target": "dmg", "arch": ["arm64", "x64"] }
+      ]
+    },
+    "dmg": {
+      "title": "${productName} ${version}"
+    }
   }
 }
