@@ -6,14 +6,15 @@
   <title>Pomodoro Focus</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="idle">
+<body>
   <div class="bubble" id="bubble">
 
-    <!-- Scrolling code backdrop -->
+    <!-- Scrolling code backdrop: continuous loop of Grind 75 header + solution blocks -->
     <div class="code-bg" aria-hidden="true">
-      <div class="code-header" id="codeHeader">Loading problems…</div>
       <div class="code-viewport">
-        <pre class="code-scroll" id="codeScroll"></pre>
+        <div class="code-scroll" id="codeScroll">
+          <div class="code-block"><div class="block-header">Loading problems…</div></div>
+        </div>
       </div>
     </div>
 

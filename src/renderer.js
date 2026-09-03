@@ -3,7 +3,6 @@
 // ------------------------------------------------------------------
 
 const els = {
-  body: document.body,
   countdown: document.getElementById('countdown'),
   modePill: document.getElementById('modePill'),
   cycleInfo: document.getElementById('cycleInfo'),
@@ -18,7 +17,6 @@ const els = {
   breakInput: document.getElementById('breakInput'),
   saveSettings: document.getElementById('saveSettings'),
   cancelSettings: document.getElementById('cancelSettings'),
-  codeHeader: document.getElementById('codeHeader'),
   codeScroll: document.getElementById('codeScroll')
 };
 
@@ -121,58 +119,60 @@ els.saveSettings.onclick = () => {
   reset();
 };
 
-// ---------- Focus / idle (translucent) toggle ----------
-window.api.onWindowFocus((focused) => {
-  els.body.classList.toggle('active', focused);
-  els.body.classList.toggle('idle', !focused);
-});
-
 // "Start Focus Timer" from the tray menu — begin a run if not already going.
 window.api.onTrayStart(() => {
   if (!running) start();
 });
 
 // ------------------------------------------------------------------
-//  Background code scroller
+//  Background code scroller — a single continuous loop of
+//  "# id. Title" headers each followed by their solution, with no
+//  gaps between problems.
 // ------------------------------------------------------------------
-let problems = [];
-let probIndex = 0;
 let scrollY = 0;
+let loopHeight = 0;
 let rafId = null;
 const SPEED = 0.35; // pixels per frame
 
-function loadProblem(i) {
-  if (!problems.length) return;
-  const p = problems[i % problems.length];
-  els.codeHeader.textContent = `# ${p.id ? p.id + '. ' : ''}${p.title}`;
-  // Repeat the snippet so the loop always has content filling the viewport.
-  els.codeScroll.textContent = p.solution + '\n\n\n';
-  scrollY = -60; // start slightly above so it eases in
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function blockHTML(p) {
+  const header = `# ${p.id ? p.id + '. ' : ''}${p.title}`;
+  return `<div class="code-block">` +
+    `<div class="block-header">${escapeHtml(header)}</div>` +
+    `<pre class="block-code">${escapeHtml(p.solution)}</pre>` +
+    `</div>`;
 }
 
 function animateScroll() {
   scrollY += SPEED;
-  els.codeScroll.style.transform = `translateY(${-scrollY}px)`;
-
-  // When the current snippet has fully scrolled past, advance to the next.
-  const contentHeight = els.codeScroll.scrollHeight;
-  if (scrollY > contentHeight) {
-    probIndex = (probIndex + 1) % problems.length;
-    loadProblem(probIndex);
+  // Content is duplicated back-to-back, so subtracting exactly one
+  // copy's height keeps the motion continuous with no visible seam.
+  if (loopHeight > 0 && scrollY >= loopHeight) {
+    scrollY -= loopHeight;
   }
+  els.codeScroll.style.transform = `translateY(${-scrollY}px)`;
   rafId = requestAnimationFrame(animateScroll);
 }
 
 async function initCode() {
-  problems = await window.api.loadSolutions();
+  const problems = await window.api.loadSolutions();
   if (!problems.length) {
-    els.codeHeader.textContent = '# Add solutions to solutions.json';
-    els.codeScroll.textContent =
-      '# No problems loaded yet.\n# See README.md for the database format.';
+    els.codeScroll.innerHTML =
+      '<div class="code-block"><div class="block-header"># Add solutions to solutions.json</div></div>';
     return;
   }
-  loadProblem(0);
-  animateScroll();
+  const html = problems.map(blockHTML).join('');
+  // Two copies back-to-back give the loop somewhere identical to land
+  // on when it wraps, so the transition is invisible.
+  els.codeScroll.innerHTML = html + html;
+
+  requestAnimationFrame(() => {
+    loopHeight = els.codeScroll.scrollHeight / 2;
+    animateScroll();
+  });
 }
 
 // ---------- Boot ----------

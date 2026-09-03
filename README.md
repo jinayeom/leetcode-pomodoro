@@ -2,13 +2,12 @@
 
 A glassmorphic desktop Pomodoro timer inspired by the macOS/iOS widget aesthetic.
 
-- **Translucent bubble** with frosted blur when idle (not focused).
-- **Deep blue → indigo gradient** when the window is clicked/focused.
+- **Translucent, frosted-glass bubble** in a deep blue–indigo gradient.
 - **Configurable** focus & break durations (gear icon → Settings).
 - **Large center countdown** (~20% of the window height).
-- **Scrolling Python code** backdrop that loops through all **75** LeetCode
-  **Grind 75** solutions — the problem title sits in the header, the solution
-  scrolls below.
+- **Scrolling Python code** backdrop — a single continuous loop through all
+  **75** LeetCode **Grind 75** solutions, each problem's header immediately
+  followed by its solution with no gaps in between.
 - **Lives in the menu bar** — a tray icon lets you show/hide the widget or
   quit; the × on the window just tucks it away instead of closing the app.
 
@@ -24,10 +23,8 @@ npm install
 npm start
 ```
 
-The app launches as a frameless, translucent window and adds an icon to your
-menu bar (it won't show in the dock). Drag the widget by its top bar. Click it
-to make it "wake up" into the vivid indigo state; click away and it fades back
-to translucent.
+The app launches as a frameless, translucent indigo window and adds an icon to
+your menu bar (it won't show in the dock). Drag the widget by its top bar.
 
 ### Menu bar controls
 
@@ -85,8 +82,7 @@ The full Grind 75 list (for reference) is at
 
 - **Scroll speed** — `SPEED` constant near the bottom of `src/renderer.js`.
 - **Colors** — the `:root` variables at the top of `src/styles.css`
-  (`--active-bg-*` for the indigo gradient, `--idle-bg` for the translucent
-  state).
+  (`--bg-1` / `--bg-2` / `--bg-3` for the indigo gradient).
 - **Countdown size** — the `.countdown { font-size: 20vh }` rule in
   `src/styles.css`.
 - **Window size** — `width` / `height` in `src/main.js`.

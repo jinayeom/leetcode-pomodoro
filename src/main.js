@@ -32,11 +32,6 @@ function createWindow() {
   win.loadFile(path.join(__dirname, 'index.html'));
   win.once('ready-to-show', () => win.show());
 
-  // Tell the renderer whenever the window gains/loses focus so it can
-  // switch between the translucent (idle) and vivid indigo (active) states.
-  win.on('focus', () => win.webContents.send('window-focus', true));
-  win.on('blur', () => win.webContents.send('window-focus', false));
-
   // Behave like a menu-bar accessory: the × tucks the widget away into the
   // tray instead of quitting the app. Only the tray's "Quit" truly exits.
   win.on('close', (e) => {
