@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!--
+    Runtime capability exceptions, not resource access. These three are
+    required for every Electron app running under Hardened Runtime — V8
+    (Chromium's JS engine) needs JIT + executable memory, and Electron's
+    helper processes rely on dyld environment variables. Omitting them
+    causes the app to crash on launch. See:
+    https://www.electronjs.org/docs/latest/tutorial/code-signing
+  -->
+  <key>com.apple.security.cs.allow-jit</key>
+  <true/>
+  <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+  <true/>
+  <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+  <true/>
+
+  <!--
+    Everything below this line is a genuine resource-access entitlement,
+    deliberately left OUT under the principle of least privilege. An absent
+    key is a hard deny — this app never touches the camera, microphone,
+    location, contacts, USB devices, or network, so none of these are
+    declared:
+      com.apple.security.device.camera
+      com.apple.security.device.microphone
+      com.apple.security.device.usb
+      com.apple.security.device.bluetooth
+      com.apple.security.personal-information.location
+      com.apple.security.personal-information.addressbook
+      com.apple.security.personal-information.calendars
+      com.apple.security.network.client
+      com.apple.security.network.server
+      com.apple.security.files.user-selected.read-write
+      com.apple.security.files.downloads.read-write
+  -->
+</dict>
+</plist>
