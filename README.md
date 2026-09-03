@@ -1,3 +1,5 @@
+<img width="852" height="627" alt="leetcode pomodoro" src="https://github.com/user-attachments/assets/debeabbf-a907-468c-9bc7-0fbe44d93cce" />
+
 # Pomodoro Focus
 
 A glassmorphic desktop Pomodoro timer inspired by the macOS/iOS widget aesthetic.
