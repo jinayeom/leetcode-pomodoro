@@ -6,6 +6,9 @@ let win;
 let tray;
 let isQuitting = false;
 
+const NORMAL_WIDTH = 460;
+const WIDE_WIDTH = 820;
+
 function createWindow() {
   win = new BrowserWindow({
     width: 460,
@@ -40,6 +43,15 @@ function createWindow() {
       win.hide();
     }
   });
+}
+
+function setWindowWide(wide) {
+  if (!win) return;
+  const bounds = win.getBounds();
+  const targetWidth = wide ? WIDE_WIDTH : NORMAL_WIDTH;
+  // Grow/shrink from the center rather than the top-left corner.
+  const x = Math.round(bounds.x + (bounds.width - targetWidth) / 2);
+  win.setBounds({ x, y: bounds.y, width: targetWidth, height: bounds.height }, true);
 }
 
 function toggleWindow() {
@@ -100,6 +112,7 @@ ipcMain.handle('load-solutions', () => {
 
 ipcMain.on('window-minimize', () => win && win.minimize());
 ipcMain.on('window-close', () => win && win.hide());
+ipcMain.on('window-set-wide', (_e, wide) => setWindowWide(wide));
 
 app.whenReady().then(() => {
   // Menu-bar-style app: live in the tray rather than cluttering the dock.

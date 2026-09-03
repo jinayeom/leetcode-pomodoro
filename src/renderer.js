@@ -10,6 +10,7 @@ const els = {
   resetBtn: document.getElementById('resetBtn'),
   skipBtn: document.getElementById('skipBtn'),
   settingsBtn: document.getElementById('settingsBtn'),
+  widenBtn: document.getElementById('widenBtn'),
   minBtn: document.getElementById('minBtn'),
   closeBtn: document.getElementById('closeBtn'),
   settingsOverlay: document.getElementById('settingsOverlay'),
@@ -103,6 +104,14 @@ els.resetBtn.onclick = reset;
 els.skipBtn.onclick = switchMode;
 els.minBtn.onclick = () => window.api.minimize();
 els.closeBtn.onclick = () => window.api.close();
+
+let isWide = false;
+els.widenBtn.onclick = () => {
+  isWide = !isWide;
+  window.api.setWide(isWide);
+  els.widenBtn.textContent = isWide ? '⤡' : '⤢';
+  els.widenBtn.title = isWide ? 'Narrow' : 'Widen';
+};
 
 els.settingsBtn.onclick = () => {
   els.focusInput.value = settings.focus;
