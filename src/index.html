@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pomodoro Focus</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="idle">
+  <div class="bubble" id="bubble">
+
+    <!-- Scrolling code backdrop -->
+    <div class="code-bg" aria-hidden="true">
+      <div class="code-header" id="codeHeader">Loading problems…</div>
+      <div class="code-viewport">
+        <pre class="code-scroll" id="codeScroll"></pre>
+      </div>
+    </div>
+
+    <!-- Custom draggable title bar -->
+    <div class="titlebar">
+      <span class="mode-pill" id="modePill">Focus</span>
+      <div class="win-controls">
+        <button class="win-btn" id="settingsBtn" title="Settings">⚙</button>
+        <button class="win-btn" id="minBtn" title="Minimize">–</button>
+        <button class="win-btn close" id="closeBtn" title="Close">×</button>
+      </div>
+    </div>
+
+    <!-- Center countdown (~20% of screen) -->
+    <div class="center">
+      <div class="countdown" id="countdown">25:00</div>
+      <div class="controls">
+        <button class="ctrl-btn" id="startBtn">Start</button>
+        <button class="ctrl-btn ghost" id="resetBtn">Reset</button>
+        <button class="ctrl-btn ghost" id="skipBtn">Skip</button>
+      </div>
+      <div class="cycle-info" id="cycleInfo">Round 1</div>
+    </div>
+
+    <!-- Settings panel -->
+    <div class="settings-overlay" id="settingsOverlay">
+      <div class="settings-card">
+        <h2>Timer Settings</h2>
+        <label>
+          Focus duration (minutes)
+          <input type="number" id="focusInput" min="1" max="180" value="25" />
+        </label>
+        <label>
+          Break duration (minutes)
+          <input type="number" id="breakInput" min="1" max="60" value="5" />
+        </label>
+        <div class="settings-actions">
+          <button class="ctrl-btn" id="saveSettings">Save</button>
+          <button class="ctrl-btn ghost" id="cancelSettings">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

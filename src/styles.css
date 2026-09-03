@@ -1,0 +1,249 @@
+:root {
+  /* Idle (translucent) palette */
+  --idle-bg: rgba(28, 32, 48, 0.28);
+  --idle-border: rgba(255, 255, 255, 0.14);
+  --idle-text: rgba(255, 255, 255, 0.55);
+
+  /* Active (clicked / focused) deep blue–indigo palette */
+  --active-bg-1: rgba(30, 27, 96, 0.82);
+  --active-bg-2: rgba(49, 46, 129, 0.78);
+  --active-bg-3: rgba(30, 58, 138, 0.72);
+  --active-border: rgba(129, 140, 248, 0.55);
+  --active-text: rgba(255, 255, 255, 0.98);
+  --accent: #818cf8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  font-family: -apple-system, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+  user-select: none;
+}
+
+/* ---------- The bubble container ---------- */
+.bubble {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 30px;
+  overflow: hidden;
+  border: 1px solid var(--idle-border);
+  background: var(--idle-bg);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  transition: background 0.55s ease, border-color 0.55s ease, box-shadow 0.55s ease;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+/* Active state — vivid indigo gradient when the window is focused/clicked */
+body.active .bubble {
+  background:
+    linear-gradient(160deg, var(--active-bg-1) 0%, var(--active-bg-2) 45%, var(--active-bg-3) 100%);
+  border-color: var(--active-border);
+  box-shadow: 0 24px 70px rgba(49, 46, 129, 0.55),
+              inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* ---------- Scrolling code backdrop ---------- */
+.code-bg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0.18;
+  transition: opacity 0.55s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+body.active .code-bg { opacity: 0.30; }
+
+.code-header {
+  flex: 0 0 auto;
+  padding: 40px 22px 8px;
+  font-family: "SF Mono", "JetBrains Mono", Menlo, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: var(--accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.code-viewport {
+  flex: 1 1 auto;
+  overflow: hidden;
+  position: relative;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 82%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 82%, transparent 100%);
+}
+
+.code-scroll {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 22px;
+  font-family: "SF Mono", "JetBrains Mono", Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(200, 210, 255, 0.9);
+  white-space: pre;
+  will-change: transform;
+}
+
+/* ---------- Title bar ---------- */
+.titlebar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  z-index: 5;
+  -webkit-app-region: drag;
+}
+
+.mode-pill {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--idle-text);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--idle-border);
+  transition: all 0.55s ease;
+}
+body.active .mode-pill {
+  color: #fff;
+  background: rgba(129, 140, 248, 0.25);
+  border-color: var(--active-border);
+}
+
+.win-controls { display: flex; gap: 6px; -webkit-app-region: no-drag; }
+
+.win-btn {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.10);
+  color: var(--idle-text);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.win-btn:hover { background: rgba(255, 255, 255, 0.22); color: #fff; }
+.win-btn.close:hover { background: #ef4444; color: #fff; }
+body.active .win-btn { color: rgba(255, 255, 255, 0.85); }
+
+/* ---------- Center countdown ---------- */
+.center {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  pointer-events: none;
+}
+.center .controls, .center .ctrl-btn { pointer-events: auto; }
+
+.countdown {
+  /* ~20% of the window — large, centered focal point */
+  font-size: 20vh;
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1;
+  color: var(--idle-text);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+  transition: color 0.55s ease, text-shadow 0.55s ease;
+}
+body.active .countdown {
+  color: var(--active-text);
+  text-shadow: 0 0 30px rgba(129, 140, 248, 0.65);
+}
+
+.controls { display: flex; gap: 10px; }
+
+.ctrl-btn {
+  padding: 9px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--idle-border);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--idle-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.ctrl-btn:hover { transform: translateY(-1px); }
+body.active .ctrl-btn {
+  color: #fff;
+  background: rgba(129, 140, 248, 0.35);
+  border-color: var(--active-border);
+}
+body.active .ctrl-btn:hover { background: rgba(129, 140, 248, 0.55); }
+.ctrl-btn.ghost { background: transparent; }
+
+.cycle-info {
+  font-size: 12px;
+  color: var(--idle-text);
+  letter-spacing: 0.5px;
+  transition: color 0.55s ease;
+}
+body.active .cycle-info { color: rgba(255, 255, 255, 0.7); }
+
+/* ---------- Settings overlay ---------- */
+.settings-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 12, 24, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.settings-overlay.open { display: flex; }
+
+.settings-card {
+  width: 82%;
+  max-width: 320px;
+  padding: 24px;
+  border-radius: 22px;
+  background: linear-gradient(160deg, rgba(30, 27, 96, 0.95), rgba(30, 58, 138, 0.92));
+  border: 1px solid var(--active-border);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  color: #fff;
+}
+.settings-card h2 { font-size: 16px; margin-bottom: 18px; font-weight: 600; }
+.settings-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  margin-bottom: 16px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.settings-card input {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(129, 140, 248, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+}
+.settings-card input:focus { border-color: var(--accent); }
+.settings-actions { display: flex; gap: 10px; margin-top: 6px; }

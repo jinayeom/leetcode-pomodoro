@@ -1,0 +1,14 @@
+{
+  "name": "pomodoro-focus",
+  "version": "1.0.0",
+  "description": "A glassmorphic Pomodoro timer with scrolling LeetCode (Grind 75) solutions in the background.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.0.0"
+  }
+}
