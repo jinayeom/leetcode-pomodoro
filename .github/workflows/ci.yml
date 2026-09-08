@@ -1,0 +1,54 @@
+name: CI
+
+# Run this workflow whenever a pull request targeting `main` is opened,
+# pushed to, or reopened. This does NOT run on every commit to every
+# branch -- only when that branch is attached to a PR aimed at main.
+on:
+  pull_request:
+    branches: [main]
+
+# Give the automatic GITHUB_TOKEN the smallest permissions it needs.
+# This job only reads the repo (checkout, install, build) -- it never
+# writes anything back -- so read-only is the correct, least-privilege
+# setting.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Install, lint, and build (macOS)
+    # This app packages a macOS-only .dmg (see the "mac" block in
+    # package.json) and relies on macOS-specific entitlements and icon
+    # formats (.icns). Only a real macOS runner can validate that build,
+    # so macos-latest is a requirement here, not a preference.
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies (reproducible)
+        run: npm ci
+
+      - name: Lint
+        # ESLint parses every file before applying rules, so a syntax
+        # error fails here too -- this replaces a separate `node --check`
+        # step, and additionally catches real bugs (e.g. undefined
+        # variables, shadowed globals) that a syntax check can't see.
+        run: npm run lint
+
+      - name: Build unpacked app with electron-builder
+        # --dir produces an unpacked .app instead of a .dmg, which is much
+        # faster and is enough to prove the packaging config (icon,
+        # entitlements, hardened runtime settings) is valid. It does not
+        # produce a release artifact -- see the README for the full
+        # `npm run dist` release process.
+        run: npx electron-builder --mac --dir
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
