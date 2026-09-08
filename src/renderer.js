@@ -95,7 +95,7 @@ function notify() {
     new Notification('Pomodoro Focus', {
       body: mode === 'focus' ? `Round ${round} — time to focus!` : 'Break time — step away.'
     });
-  } catch (_) { /* notifications optional */ }
+  } catch { /* notifications optional */ }
 }
 
 // ---------- Wire up controls ----------
@@ -138,9 +138,8 @@ window.api.onTrayStart(() => {
 //  "# id. Title" headers each followed by their solution, with no
 //  gaps between problems.
 // ------------------------------------------------------------------
-let scrollY = 0;
+let scrollPos = 0;
 let loopHeight = 0;
-let rafId = null;
 const SPEED = 0.35; // pixels per frame
 
 function escapeHtml(str) {
@@ -156,14 +155,14 @@ function blockHTML(p) {
 }
 
 function animateScroll() {
-  scrollY += SPEED;
+  scrollPos += SPEED;
   // Content is duplicated back-to-back, so subtracting exactly one
   // copy's height keeps the motion continuous with no visible seam.
-  if (loopHeight > 0 && scrollY >= loopHeight) {
-    scrollY -= loopHeight;
+  if (loopHeight > 0 && scrollPos >= loopHeight) {
+    scrollPos -= loopHeight;
   }
-  els.codeScroll.style.transform = `translateY(${-scrollY}px)`;
-  rafId = requestAnimationFrame(animateScroll);
+  els.codeScroll.style.transform = `translateY(${-scrollPos}px)`;
+  requestAnimationFrame(animateScroll);
 }
 
 async function initCode() {
