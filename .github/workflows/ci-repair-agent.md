@@ -46,7 +46,7 @@ pre-steps:
       if [ -n "${MANUAL_PR:-}" ]; then
         PR_NUMBER="$MANUAL_PR"
       else
-        PR_NUMBER=$(gh pr list --state open --json number,headRefOid \
+        PR_NUMBER=$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --json number,headRefOid \
           --jq ".[] | select(.headRefOid == \"$HEAD_SHA\") | .number" | head -n1)
       fi
       mkdir -p /tmp/gh-aw/agent
@@ -56,7 +56,7 @@ pre-steps:
         jq -n '{found: false}' > /tmp/gh-aw/agent/pr-context.json
         exit 0
       fi
-      PR_JSON=$(gh pr view "$PR_NUMBER" --json number,headRefName,headRefOid,url,title)
+      PR_JSON=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json number,headRefName,headRefOid,url,title)
       BRANCH=$(echo "$PR_JSON" | jq -r .headRefName)
       HEAD=$(echo "$PR_JSON" | jq -r .headRefOid)
       URL=$(echo "$PR_JSON" | jq -r .url)
