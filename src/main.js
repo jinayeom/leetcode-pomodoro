@@ -6,8 +6,6 @@ let win;
 let tray;
 let isQuitting = false;
 
-console.log(thisVariableWasNeverDeclared);
-
 const NORMAL_WIDTH = 460;
 const WIDE_WIDTH = 820;
 
