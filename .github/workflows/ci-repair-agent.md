@@ -37,6 +37,7 @@ pre-steps:
   - name: Resolve the PR for this failing run
     id: resolve
     env:
+      GH_TOKEN: ${{ github.token }}
       HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
       MANUAL_PR: ${{ github.event.inputs.pr_number }}
       RUN_URL: ${{ github.event.workflow_run.html_url }}
