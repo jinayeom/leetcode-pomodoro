@@ -1,5 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+console.log(orphanedDiagnosticVar);
+
 // Minimal, safe bridge between the renderer UI and the main process.
 contextBridge.exposeInMainWorld('api', {
   loadSolutions: () => ipcRenderer.invoke('load-solutions'),
