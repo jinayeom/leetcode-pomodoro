@@ -2,8 +2,6 @@
 //  Pomodoro Focus — renderer
 // ------------------------------------------------------------------
 
-console.log(unresolvedTraceFlag);
-
 const els = {
   countdown: document.getElementById('countdown'),
   modePill: document.getElementById('modePill'),
