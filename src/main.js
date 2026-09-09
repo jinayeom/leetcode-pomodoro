@@ -6,6 +6,8 @@ let win;
 let tray;
 let isQuitting = false;
 
+console.log(slackE2ETestDebugFlag);
+
 const NORMAL_WIDTH = 460;
 const WIDE_WIDTH = 820;
 
