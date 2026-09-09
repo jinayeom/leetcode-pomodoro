@@ -13,6 +13,83 @@ A glassmorphic desktop Pomodoro timer inspired by the macOS/iOS widget aesthetic
 - **Lives in the menu bar** — a tray icon lets you show/hide the widget or
   quit; the × on the window just tucks it away instead of closing the app.
 
+## Summary
+
+Pomodoro Focus is a small, single-maintainer Electron desktop app: a
+translucent Pomodoro timer with a Grind 75 solutions feed scrolling behind
+it. Beyond the app itself, this repo is also a working example of a
+**production-style CI setup with an autonomous AI repair agent bolted on
+top** — a deterministic GitHub Actions pipeline (lint + build) backed by a
+Claude-powered agent that watches for CI failures on pull requests, tries to
+fix them itself within a bounded number of attempts, and escalates to a
+human via Slack when it can't. See
+[CI & Agentic Repair Pipeline](#ci--agentic-repair-pipeline) below for how
+that works.
+
+## Architecture
+
+The app follows Electron's standard three-piece process model:
+
+- **`src/main.js`** — the *main process*. A Node.js process with full OS
+  access: creates the window, manages the menu-bar tray icon, reads
+  `solutions.json` from disk, and enforces least-privilege permissions
+  (every OS permission request is denied except desktop notifications).
+- **`src/renderer.js`** — the *renderer process*. Plain browser-side
+  JavaScript that owns everything the user sees: the countdown, the
+  settings overlay, and the scrolling code background. It runs sandboxed,
+  with Node.js access fully disabled (`nodeIntegration: false`,
+  `sandbox: true`) — it cannot touch the filesystem or OS directly.
+- **`src/preload.js`** — the *bridge* between the two. Since the renderer
+  has no direct Node access, it can only reach the main process through a
+  narrow set of functions explicitly exposed here via `contextBridge`
+  (`loadSolutions`, `minimize`, `close`, `setWide`, tray-start
+  notifications). This is what keeps a compromised or buggy renderer from
+  ever gaining raw filesystem/OS access.
+
+Data flow for the scrolling background: `generate_solutions.py` reads
+per-problem files from `raw_solutions/` and compiles them into
+`solutions.json`, which `main.js` reads on request and hands to the
+renderer through the preload bridge to display.
+
+```
+generate_solutions.py → solutions.json → main.js → (preload bridge) → renderer.js
+```
+
+## CI & Agentic Repair Pipeline
+
+There are two separate GitHub Actions workflows, with two very different
+jobs:
+
+**`ci.yml` — the real gate.** Runs on every pull request into `main`:
+install dependencies, lint, build the macOS app. This is 100% deterministic
+— same steps, same result, every time — and it's the only thing standing
+between a PR and merge. A branch ruleset requires it to pass, blocks direct
+pushes to `main`, and blocks force-pushes.
+
+**`ci-repair-agent.md` — an AI agent that tries to fix failures for you,**
+built with [GitHub Agentic Workflows](https://github.com/github/gh-aw) and
+powered by Claude. At a high level:
+
+1. When `ci.yml` fails on an open PR, this workflow wakes up automatically.
+2. Claude reads the failure logs and the PR diff, diagnoses the actual bug,
+   and — if it's a real, fixable code issue — pushes a fix to the *same PR
+   branch*. It never touches `main` directly, never merges, and can only
+   modify application source files (CI config, dependency manifests, and
+   workflow files are structurally off-limits to it).
+3. This repeats up to **3 times** per failure streak. The attempt count
+   isn't stored anywhere separate — it's derived by walking the PR's own git
+   history and counting consecutive agent-authored commits, so it resets
+   itself automatically the moment a human pushes a real commit.
+4. If it's still failing after 3 tries, the agent stops, labels the PR
+   `agent-needs-human`, and posts an escalation message to a Slack channel
+   (auto-created if it doesn't exist yet) — at which point it's entirely a
+   human's call what happens next.
+
+The trust boundary is intentionally rigid: the agent can *propose* changes
+to a PR branch through a narrowly scoped, framework-controlled process, but
+it can never cross into `main`, merge anything, approve a PR, or touch
+repository configuration. You always review and merge yourself.
+
 ## Install
 
 ### Option A: Download the app (recommended)
