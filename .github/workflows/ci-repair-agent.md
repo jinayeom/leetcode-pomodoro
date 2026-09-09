@@ -84,10 +84,15 @@ steps:
       BOT_EMAIL="41898282+github-actions[bot]@users.noreply.github.com"
       # Walk newest-to-oldest; stop at the first commit that is not a
       # bot-authored repair commit (either a human push or the branch root).
-      COUNT=$(git log --format='%ae%x09%s' -n 50 | awk -F'\t' -v bot="$BOT_EMAIL" '
+      # Write git log's output to a file first, rather than piping directly
+      # into awk: awk's early `exit` can close the pipe while git log is
+      # still writing, which triggers a real SIGPIPE and (with pipefail)
+      # aborts this whole step -- reading from a file sidesteps that.
+      git log --format='%ae%x09%s' -n 50 > /tmp/repair-attempts.log
+      COUNT=$(awk -F'\t' -v bot="$BOT_EMAIL" '
         { if ($1 == bot && index($2, "[gh-aw-repair]") > 0) { c++; next } else { exit } }
         END { print c+0 }
-      ')
+      ' /tmp/repair-attempts.log)
       mkdir -p /tmp/gh-aw/agent
       echo "$COUNT" > /tmp/gh-aw/agent/attempt-count.txt
 
