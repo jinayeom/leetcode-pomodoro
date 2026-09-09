@@ -268,8 +268,8 @@ If the attempt count from `/tmp/gh-aw/agent/attempt-count.txt` is already `3`, *
 
 Call the `send_slack_escalation` tool with: `pr_number`, `pr_url`, `branch`, `failing_check`, a 1-line-per-attempt `attempts_summary` (read this back from your own prior PR comments), `current_failure`, and `diagnosis`. Then:
 
-- `add-labels`: add `agent-needs-human`.
-- `add-comment`: post a short human-readable summary of all 3 attempts and the current failure, ending with a note that autonomous repair has stopped and human review is needed.
+- `add-labels`: add `agent-needs-human`. **You must include the PR number (`pr_number` from the context file) in this call** — without it, the label will silently fail to apply.
+- `add-comment`: post a short human-readable summary of all 3 attempts and the current failure, ending with a note that autonomous repair has stopped and human review is needed. **You must include the PR number (`pr_number` from the context file) in this call too.**
 
 Do not push any further commits once escalating.
 
