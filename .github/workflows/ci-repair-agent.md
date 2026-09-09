@@ -115,6 +115,7 @@ safe-outputs:
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         REPO_NAME: ${{ github.event.repository.name }}
+        SLACK_USER_ID: ${{ vars.SLACK_USER_ID }}
       inputs:
         pr_number:
           description: "Pull request number"
@@ -190,6 +191,20 @@ safe-outputs:
             curl -sS -X POST -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
               -H "Content-Type: application/json; charset=utf-8" \
               -d "{\"channel\": \"$CHANNEL_ID\"}" https://slack.com/api/conversations.join > /dev/null || true
+
+            if [ -n "${SLACK_USER_ID:-}" ]; then
+              INVITE_RESP=$(curl -sS -X POST -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+                -H "Content-Type: application/json; charset=utf-8" \
+                -d "{\"channel\": \"$CHANNEL_ID\", \"users\": \"$SLACK_USER_ID\"}" \
+                https://slack.com/api/conversations.invite)
+              INVITE_OK=$(echo "$INVITE_RESP" | jq -r '.ok')
+              INVITE_ERR=$(echo "$INVITE_RESP" | jq -r '.error // empty')
+              if [ "$INVITE_OK" != "true" ] && [ "$INVITE_ERR" != "already_in_channel" ]; then
+                echo "Warning: failed to invite $SLACK_USER_ID to #$CHANNEL_NAME: $INVITE_ERR" >&2
+              fi
+            else
+              echo "Warning: SLACK_USER_ID variable not set -- skipping auto-invite" >&2
+            fi
 
             TEXT=$(printf ':robot_face: *CI Repair Agent — Human Assistance Required*\n\n*Repository:* %s\n*PR:* #%s\n*Branch:* `%s`\n\n*Autonomous repair attempts:* 3/3\n\n*Failing check:*\n%s\n\n*Claude attempted:*\n%s\n\n*Current failure:*\n%s\n\n*Possible root cause:*\n%s\n\nAutonomous repairs have stopped. Human investigation required.\n\n%s' \
               "$REPO_NAME" "$PR_NUMBER" "$BRANCH" "$FAILING_CHECK" "$ATTEMPTS_SUMMARY" "$CURRENT_FAILURE" "$DIAGNOSIS" "$PR_URL")
