@@ -255,7 +255,7 @@ If the attempt count from `/tmp/gh-aw/agent/attempt-count.txt` is already `3`, *
   ```
 
   Note: you are running on a Linux runner and cannot execute the `electron-builder --mac --dir` step from `ci.yml` yourself (it requires macOS). That step is the real CI's job, not yours — once you push, the actual `ci.yml` workflow reruns on macOS and is the authoritative check. Your local verification is a sanity check to avoid pushing an obviously-still-broken fix, not a substitute for CI passing.
-- Push your fix with `push-to-pull-request-branch` targeting `pr_number` from the context file.
+- Push your fix with `push-to-pull-request-branch` targeting `pr_number` from the context file. The `message` you pass **must end with the literal text `[gh-aw-repair]`** (e.g. `"fix: remove undeclared variable reference [gh-aw-repair]"`) — this exact marker is what the attempt counter looks for in commit titles; without it, this commit will not be recognized as a repair attempt on the next run.
 - Post exactly one `add-comment` on the PR recording, concisely (no chain-of-thought, just the decision record):
   - Attempt number (attempt count from the file, plus 1) out of 3
   - The CI failure you saw
