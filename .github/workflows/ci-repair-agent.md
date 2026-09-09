@@ -157,7 +157,7 @@ safe-outputs:
             CURRENT_FAILURE=$(echo "$ITEM" | jq -r '.current_failure')
             DIAGNOSIS=$(echo "$ITEM" | jq -r '.diagnosis')
 
-            CHANNEL_NAME="repo-$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9-' '-')-ci"
+            CHANNEL_NAME="repo-$(printf '%s' "$REPO_NAME" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9-' '-' | tr -s '-')-ci"
 
             CHANNEL_ID=""
             CURSOR=""
