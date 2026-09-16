@@ -1,6 +1,6 @@
 <img width="852" height="627" alt="leetcode pomodoro" src="https://github.com/user-attachments/assets/debeabbf-a907-468c-9bc7-0fbe44d93cce" />
 
-# Pomodoro Focus
+# LeetCode Pomodoro
 
 A glassmorphic desktop Pomodoro timer inspired by the macOS/iOS widget aesthetic.
 
@@ -13,9 +13,13 @@ A glassmorphic desktop Pomodoro timer inspired by the macOS/iOS widget aesthetic
 - **Lives in the menu bar** — a tray icon lets you show/hide the widget or
   quit; the × on the window just tucks it away instead of closing the app.
 
+[![Latest release](https://img.shields.io/github/v/release/jinayeom/leetcode-pomodoro?label=release)](https://github.com/jinayeom/leetcode-pomodoro/releases)
+
+**[Download the latest release](https://github.com/jinayeom/leetcode-pomodoro/releases)** for macOS, or see [Run from Source](#run-from-source) below.
+
 ## Summary
 
-Pomodoro Focus is a small, single-maintainer Electron desktop app: a
+LeetCode Pomodoro is a small, single-maintainer Electron desktop app: a
 translucent Pomodoro timer with a Grind 75 solutions feed scrolling behind
 it. Beyond the app itself, this repo is also a working example of a
 **production-style CI setup with an autonomous AI repair agent bolted on
@@ -90,29 +94,58 @@ to a PR branch through a narrowly scoped, framework-controlled process, but
 it can never cross into `main`, merge anything, approve a PR, or touch
 repository configuration. You always review and merge yourself.
 
-## Install
+## Download
 
-### Option A: Download the app (recommended)
+Grab the latest `.dmg` from the [Releases page](https://github.com/jinayeom/leetcode-pomodoro/releases).
+Each release ships two `.dmg` builds — pick the one that matches your Mac:
 
-Grab the latest `.dmg` from the [Releases page](https://github.com/jinayeom/leetcode-pomodoro/releases) —
-pick the `arm64` build for Apple Silicon Macs or the plain build for Intel
-Macs. Open the `.dmg` and drag **LeetCode Pomodoro** into Applications.
+| Build   | For                                                    |
+|---------|---------------------------------------------------------|
+| `arm64` | Apple Silicon Macs — M1, M2, M3, M4, M5, etc.            |
+| `x64`   | Intel Macs                                               |
 
-This build isn't code-signed or notarized (that requires a paid Apple
-Developer account), so macOS Gatekeeper will refuse to open it with a
-message like *"LeetCode Pomodoro" can't be opened because Apple cannot check
-it for malicious software*. To run it anyway:
+Not sure which one you have? Open the **Apple menu → About This Mac** —
+Apple Silicon Macs list a **Chip** (e.g. "Apple M2"); Intel Macs list a
+**Processor** instead.
 
-1. **Right-click** (or Control-click) **LeetCode Pomodoro.app** in
-   Applications and choose **Open**.
-2. In the dialog that appears, click **Open** again.
+Then:
 
-You only need to do this once — after that it opens normally, including via
-Spotlight or the Dock.
+1. Open the `.dmg` you downloaded.
+2. Drag **LeetCode Pomodoro** into **Applications**.
+3. Open the app from Applications (or Spotlight).
 
-### Option B: Run from source
+### macOS says the app can't be opened?
 
-Requires [Node.js](https://nodejs.org/) 18+ (includes `npm`).
+This app is open source, but it isn't code-signed or notarized — that
+requires enrolling in Apple's paid Developer Program, which this project
+doesn't do. Without that signature, macOS Gatekeeper can't verify who built
+the app, so the first launch is blocked with a message like *"LeetCode
+Pomodoro" can't be opened because Apple cannot check it for malicious
+software*. That message means Gatekeeper couldn't verify the developer — it
+is **not** a malware detection.
+
+To open it anyway:
+
+1. Try to open **LeetCode Pomodoro** from Applications. macOS will block it
+   and show the warning.
+2. Go to **System Settings → Privacy & Security**, scroll down to the
+   notice about the blocked app, and click **Open Anyway**.
+3. Confirm by clicking **Open** in the dialog that appears.
+
+On some macOS versions you can instead **right-click** (or Control-click)
+**LeetCode Pomodoro.app** in Applications, choose **Open**, and confirm — this
+has the same effect as the steps above.
+
+You only need to do this once per download — after that the app opens
+normally, including via Spotlight or the Dock. This only allows this one
+app through; it doesn't change Gatekeeper's protection for anything else on
+your Mac, so avoid disabling Gatekeeper system-wide (e.g. `spctl
+--master-disable`) to work around this.
+
+## Run from Source
+
+Requires [Node.js](https://nodejs.org/) and npm (CI builds this project on
+Node.js 20 — see [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
 ```bash
 git clone https://github.com/jinayeom/leetcode-pomodoro.git
@@ -121,15 +154,14 @@ npm install
 npm start
 ```
 
-Either way, the app launches as a frameless, translucent indigo window and
-adds an icon to your menu bar (it won't show in the dock). Drag the widget by
-its top bar.
+## Usage
 
-### Menu bar controls
+The app launches as a frameless, translucent indigo window and adds an icon
+to your menu bar (it won't show in the dock). Drag the widget by its top bar.
 
 Click the tray icon to show/hide the widget, or right-click (or left-click,
 depending on your macOS settings) for a menu with **Show/Hide**,
-**Start Focus Timer**, and **Quit Pomodoro Focus**. Quitting from the tray is
+**Start Focus Timer**, and **Quit LeetCode Pomodoro**. Quitting from the tray is
 the only way to fully exit — closing the window just hides it.
 
 ## The solutions database

@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-//  Pomodoro Focus — renderer
+//  LeetCode Pomodoro — renderer
 // ------------------------------------------------------------------
 
 const els = {
@@ -92,7 +92,7 @@ function switchMode() {
 
 function notify() {
   try {
-    new Notification('Pomodoro Focus', {
+    new Notification('LeetCode Pomodoro', {
       body: mode === 'focus' ? `Round ${round} — time to focus!` : 'Break time — step away.'
     });
   } catch { /* notifications optional */ }
