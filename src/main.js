@@ -88,7 +88,7 @@ function createTray() {
   );
   icon.setTemplateImage(true); // lets macOS auto-adjust for light/dark menu bars
   tray = new Tray(icon);
-  tray.setToolTip('Pomodoro Focus');
+  tray.setToolTip('LeetCode Pomodoro');
 
   const menu = Menu.buildFromTemplate([
     { label: 'Show / Hide', click: toggleWindow },
@@ -103,7 +103,7 @@ function createTray() {
     },
     { type: 'separator' },
     {
-      label: 'Quit Pomodoro Focus',
+      label: 'Quit LeetCode Pomodoro',
       click: () => {
         isQuitting = true;
         app.quit();
